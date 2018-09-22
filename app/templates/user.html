@@ -1,0 +1,47 @@
+{% extends 'base.html' %}
+
+{% block app_content %}
+    <table class="table">
+        <tr valign='top'>
+            <td width="70px" style="padding:20px 10px;">
+                <img style="border-radius: 50%;" src="{{ user.avatar(128) }}">
+            </td>
+            <td>
+                <h3>@{{ user.username }}</h3>
+                {% if user.about_me %}<p>{{ user.about_me }}</p>{% endif %}
+                {% if user.last_seen %}
+                    <p>Last seen on: <span id="last_active">{{ user.last_seen }}</span></p>
+                {% endif %}
+                <p>{{ user.followers.count() }} followers, {{ user.followed.count() }} following.</p>
+                {% if user == current_user %}
+                <p><a href="{{ url_for('edit_profile') }}">Edit your profile</a></p>
+                {% elif not current_user.is_following(user) %}
+                <p><a href="{{ url_for('follow', username=user.username) }}">Follow</a></p>
+                {% else %}
+                <p><a href="{{ url_for('unfollow', username=user.username) }}">Unfollow</a></p>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+    {% for post in posts: %}
+        {% include '_posts.html' %}
+    {% endfor %}
+
+    <nav aria-label="Page navigation example">
+        <ul class="pager">
+            <li class="previous{% if not prev_url %} disabled {% endif %}">
+                <a href="{{ prev_url or '#' }}">Newer posts<span aria-hidden="true">&rarr;</span></a>
+            </li>
+            <li class="next{% if not next_url %} disabled {% endif %}">
+                <a href="{{ next_url or '#' }}">Older posts<span aria-hidden="true">&rarr;</span></a>
+            </li>
+        </ul>
+    </nav>
+    <script>
+        var date = document.getElementById('last_active').innerHTML;
+        date = date + ' UTC';
+        var d = new Date(date);
+        lastActive = d.toLocaleString();
+        document.getElementById('last_active').innerHTML = lastActive;
+    </script>
+{% endblock %}

@@ -1,0 +1,7 @@
+logs/
+__pycache__
+.vscode/
+venv/
+commands.txt
+pylintrc
+config.py
